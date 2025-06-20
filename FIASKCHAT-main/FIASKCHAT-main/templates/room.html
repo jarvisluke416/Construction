@@ -76,30 +76,25 @@
       <button class="roommodebutton" id="mode-toggle">
   <img id="mode-icon" src="https://c.pxhere.com/photos/f1/89/full_moon_moon_moon_craters_lunar_landscape-706492.jpg!d#google_vignette" height="40" alt="Toggle Mode">
 </button>
-
 <textarea id="code-input" placeholder="Write HTML/JS/CSS here..." style="width: 150px; height: 50px; font-family: monospace;"></textarea>
 
-<button onclick="runInPopup()" style="padding: 6px 12px; margin-left: 5px;">
+<button onclick="broadcastCode()" class="code-button">
   <i class="fa-solid fa-play"></i> Run 
 </button>
-</div>
- </div>
- 
-<script>
-  function runInPopup() {
-    const code = document.getElementById('code-input').value;
-    const popup = window.open('', '_blank', 'width=800,height=600');
 
-    if (popup) {
-      popup.document.open();
-      popup.document.write(code);
-      popup.document.close();
-    } else {
-      alert("Popup blocked! Please allow popups for this site.");
-    }
+ </div>
+ <script>
+  function broadcastCode() {
+    const code = document.getElementById('code-input').value.trim();
+    if (!code) return;
+
+    const payload = {
+      code: code,
+      sender: "{{ name }}"  // Django/Jinja template variable
+    };
+    socketio.emit('broadcast_code', payload);
   }
 </script>
-
     <div class="inputs" style="display: flex; align-items: center; gap: 10px;">
       <select id="fontSelector" style="padding: 6px; font-size: 20px; border-radius: 4px;" onchange="updateFont(this)">
         <option style="font-family: Michroma;" value="Michroma" selected>FONT SELECTOR</option>
@@ -274,7 +269,6 @@ window.addEventListener('DOMContentLoaded', () => {
 }
 
 </style>
-
 <script type="text/javascript">
   const socketio = io();
   const messages = document.getElementById("messages");
@@ -314,54 +308,34 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   const createMessage = (name, msg, type = "user") => {
-  let content = "";
+    let content = "";
 
-  if (type === "system" || name === "System") {
-    content = `
-      <div class="text system-message">
-        <span>${msg}</span>
-        <span class="muted">${new Date().toLocaleString()}</span>
-      </div>`;
-  } else {
-    const font = userFonts[name] || "Arial";
-    const color = userFontColors[name] || "#000000";
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    msg = msg.replace(urlRegex, '<a href="$&" target="_blank" class="chat-link" onclick="openPopup(event, this.href)">$&</a>');
+    if (type === "system" || name === "System") {
+      content = `
+        <div class="text system-message">
+          <span>${msg}</span>
+          <span class="muted">${new Date().toLocaleString()}</span>
+        </div>`;
+    } else {
+      const font = userFonts[name] || "Arial";
+      const color = userFontColors[name] || "#000000";
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      msg = msg.replace(urlRegex, '<a href="$&" target="_blank" class="chat-link" onclick="openPopup(event, this.href)">$&</a>');
 
-    content = `
-      <div class="text" style="font-family: ${font}; color: ${color};">
-        <span><strong>${name}</strong>: ${msg}</span>
-        <span class="muted">${new Date().toLocaleString()}</span>
-      </div>`;
-  }
+      content = `
+        <div class="text" style="font-family: ${font}; color: ${color};">
+          <span><strong>${name}</strong>: ${msg}</span>
+          <span class="muted">${new Date().toLocaleString()}</span>
+        </div>`;
+    }
 
-  messages.innerHTML += content;
-  messages.scrollTop = messages.scrollHeight;
-};
-
-socketio.on("message", (data) => {
-  createMessage(data.name, data.message, data.type);
-});
-
-
- /* const createMessage = (name, msg) => {
-    const font = userFonts[name] || "Arial";
-    const color = userFontColors[name] || "#000000";
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    msg = msg.replace(urlRegex, '<a href="$&" target="_blank" class="chat-link" onclick="openPopup(event, this.href)">$&</a>');
-
-    const content = `
-      <div class="text" style="font-family: ${font}; color: ${color};">
-        <span><strong>${name}</strong>:${msg}</span>
-        <span class="muted">${new Date().toLocaleString()}</span>
-      </div>`;
     messages.innerHTML += content;
     messages.scrollTop = messages.scrollHeight;
   };
 
   socketio.on("message", (data) => {
-    createMessage(data.name, data.message);
-  });*/
+    createMessage(data.name, data.message, data.type);
+  });
 
   socketio.on("fontChange", (data) => {
     userFonts[data.user] = data.font;
@@ -498,6 +472,34 @@ socketio.on("message", (data) => {
         });
     }
   });
+
+  // New listener for broadcast_code event
+  socketio.on('broadcast_code', ({ code, sender }) => {
+    const popup = window.open('', '_blank', 'width=800,height=600');
+
+    if (popup) {
+      popup.document.open();
+      popup.document.write(`
+        <html>
+          <head>
+            <title>Shared Code from ${sender}</title>
+          </head>
+          <body>
+            <div style="font-family: monospace;">
+              ${code}
+            </div>
+          </body>
+        </html>
+      `);
+      popup.document.close();
+    } else {
+      alert("Popup blocked! Please allow popups for this site.");
+    }
+
+    const systemMsg = `Shared code from ${sender} opened in popup.`;
+    createMessage('System', systemMsg, 'system');
+  });
 </script>
+
 {% endblock %}
 </body>
