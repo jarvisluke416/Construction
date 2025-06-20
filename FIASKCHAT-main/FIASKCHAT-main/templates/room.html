@@ -1,0 +1,440 @@
+{% extends 'base.html' %}
+
+<body class="dark-mode">
+{% block content %}
+
+<div class="chat-container">
+  <div class="user-list">
+    <ul id="user-list"></ul>
+  </div>
+
+  <div class="message-box">
+    <h2>{{ code }}</h2>
+    <hr/>
+    <div class="messages" id="messages"></div>
+
+    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 5px; position: relative;">
+      <div style="position: relative;">
+        <button id="emojiBtn">EMOJI</button>
+        <div id="emojiContainer" class="emoji-scroll-container" style="display: none;">
+          {% for emoji in ["😊", "😂", "❤️", "😍", "😒", "😘", "😁", "👍", "😭", "🙏", "😩", "👌", "😉", "🙌", "😔", "😏", "😎", "🎉", "😃", "😡", "💔", "😱", "😴", "😬", "👀", "💀", "🌹", "💩", "🙈", "🔥", "💯", "😪", "🎶", "😐", "👊", "💘", "😓", "💥", "😤", "🌸", "😞", "😳", "💋", "😅", "😷", "💤", "👑", "😖", "😇", "😚", "👋", "🌞", "🎂", "😝", "😲", "🙊", "🌈", "😥", "🌟", "😣", "💓", "🌺", "😫", "👈", "👉", "🙅", "💗", "😨", "🙃", "💡", "🌙", "😟", "💖", "💎", "😯", "😛", "👅", "👄", "😌", "🙇", "💰", "🎈", "📚", "💌", "💎", "👯", "🚀", "🌍", "🍕", "🌊", "🎧", "☁️", "🌩", "🌨", "❄️", "☃️", "⛄️", "🌬", "💨", "💧", "💦"] %}
+            <button class="emoji-btn">{{ emoji }}</button>
+          {% endfor %}
+        </div>
+      </div>
+
+      <button id="micBtn">CHROME-SP-TO-TXT</button>
+
+      <div>
+        <input type="file" id="avatarBtn" accept="image/*" style="display: none;" />
+        <button id="uploadAvatarBtn">UPLOAD AVATAR</button>
+      </div>
+
+      <button id="recordBtn">RECORD AUDIO</button>
+      <button class="roommodebutton" id="mode-toggle">
+  <img id="mode-icon" src="https://c.pxhere.com/photos/f1/89/full_moon_moon_moon_craters_lunar_landscape-706492.jpg!d#google_vignette" height="40" alt="Toggle Mode">
+</button>
+
+    </div>
+
+    <div class="inputs" style="display: flex; align-items: center; gap: 10px;">
+      <select id="fontSelector" style="padding: 6px; font-size: 20px; border-radius: 4px;" onchange="updateFont(this)">
+        <option style="font-family: Michroma;" value="Michroma" selected>FONT SELECTOR</option>
+        <option style="font-family: Michroma;" value="Michroma">Michroma</option>
+        <option style="font-family: Arial;" value="Arial">Arial</option>
+        <option style="font-family: pacifico;" value="Pacifico">Pacifico</option>
+        <option style="font-family: Courier New;" value="Courier New">Courier New</option>
+        <option style="font-family: Georgia;" value="Georgia">Georgia</option>
+        <option style="font-family: Times New Roman;" value="Times New Roman">Times New Roman</option>
+        <option style="font-family: Verdana;" value="Verdana">Verdana</option>
+        <option style="font-family: Sevillana;" value="Sevillana">Sevillana</option>
+        <option style="font-family: Caprasimo;" value="Caprasimo">Caprasimo</option>
+        <option style="font-family: Bebas Neue;" value="Bebas Neue">Bebas Neue</option>
+        <option style="font-family: Anton;" value="Anton">Anton</option>
+        <option style="font-family: Dancing Script;" value="Dancing Script">Dancing Script</option>
+        <option style="font-family: Gravita One;" value="Gravitas One">Gravitas One</option>
+        <option style="font-family: Shadows Into Light;" value="Shadows Into Light">Shadows Into Light</option>
+        <option style="font-family: Just Me Again Down Here;" value="Just Me Again Down Here">Just Me Again Down Here</option>
+        <option style="font-family: Alumni Sans SC;" value="Alumni Sans SC">Alumni Sans SC</option>
+        <option style="font-family: Caveat;" value="Caveat">Caveat</option>
+        <option style="font-family: Permanent Marker;" value="Permanent Marker">Permanent Marker</option>
+        <option style="font-family: Amatic SC;" value="Amatic SC">Amatic SC</option>
+        <option style="font-family: Monoton;" value="Monoton">Monoton</option>
+        <option style="font-family: Rock Salt;" value="Rock Salt">Rock Salt</option>
+        <option style="font-family: Mr Dafoe;" value="Mr Dafoe">Mr Dafoe</option>
+        <option style="font-family: Berkshire Swash;" value="Berkshire Swash">Berkshire Swash</option>
+        <option style="font-family: Bytesized;" value="Bytesized">Bytesized</option>
+        <option style="font-family: Monsieur La Doulaise;" value="Monsieur La Doulaise">Monsieur La Doulaise</option>
+        <option style="font-family: Bungee Spice;" value="Bungee Spice">Bungee Spice</option>
+        <option style="font-family: Kaushan Script;" value="Kaushan Script">Kaushan Script</option>
+        <option style="font-family: Mountains of Christmas;" value="Mountains of Christmas">Mountains of Christmas</option>
+      </select>
+      <script>
+function updateFont(select) {
+  const selectedFont = select.value;
+  select.style.fontFamily = `'${selectedFont}'`;
+}
+
+// ✅ Apply font on page load
+window.addEventListener('DOMContentLoaded', () => {
+  const select = document.getElementById('fontSelect');
+  updateFont(select);
+});
+</script>
+     <!--<script>
+function updateFont(select) {
+  const selectedFont = select.options[select.selectedIndex].value;
+  select.style.fontFamily = `'${selectedFont}', Michroma`; // adjust fallback as needed
+}
+
+// Apply font on page load
+window.addEventListener('DOMContentLoaded', () => {
+  const select = document.getElementById('fontSelect');
+  updateFont(select);
+});
+</script>-->
+      <!-- Font Color Dropdown -->
+      <select id="fontColorSelector" style="padding: 6px; font-size: 20px; border-radius: 4px;" onchange="updateSelectColor(this)">
+        <option style="color: #0000FF" selected>COLOR SELECTOR</option>
+        <option value="#0000FF" style="color: #0000FF">BLUE</option>
+        <option value="#000000" style="color: black;">Black</option>
+        <option value="white" style="color: white; background-color: black;">WHITE</option>
+        <option value="#FF0000" style="color: #FF0000;">RED</option>
+        <option value="rgba(242, 33, 47, 0.81)" style="color:rgba(242, 33, 47, 0.81);">RGBA(242,33,47,0.81)</option>
+        <option value="rgb(130, 22, 56)" style="color:rgb(130, 22, 56);">RGB(130,22,56)</option>
+        <option value="rgb(161, 14, 14)" style="color:rgb(161, 14, 14);">RGB(161,14,14)</option>
+        <option value="rgb(159, 74, 74)" style="color:rgb(159, 74, 74);">RGB(159,74,74)</option>
+        <option value="#008000" style="color: #008000">GREEN</option>
+        <option value="rgb(28, 212, 28)" style="color:rgb(28, 212, 28)">RGB(28,212,28)</option>
+        <option value="rgb(6, 81, 6)" style="color:rgb(6, 81, 6)">RGB(6,81,6)</option>
+        <option value="rgb(6, 81, 6)" style="color:rgb(39, 74, 80)">RGB(6,81,6)</option>
+        <option value="rgb(14, 149, 227)" style="color:rgb(14, 149, 227) ">RGB(14,149,227)</option>
+        <option value="rgb(14, 227, 227)" style="color:rgb(14, 227, 227) ">RGB(14,227,227)</option>
+        <option value="rgb(6, 52, 52)" style="color:rgb(6, 52, 52) ">RGB(6,52,52)</option>
+        <option value="rgb(13, 36, 167)" style="color:rgb(13, 36, 167) ">RGB(13,36,167)</option>
+        <option value="#FFA500" style="color: #FFA500">ORANGE</option>
+        <option value="rgb(212, 255, 0)" style="color:rgb(212, 255, 0)">RGB(212,255,0)</option>
+        <option value="gold" style="color: gold">GOLD</option>
+        <option value="#800080" style="color: #800080">PURPLE</option>
+        <option value="rgb(186, 23, 110)" style="color:rgb(186, 23, 110)">RGB(186,23,110)</option>
+
+      </select>
+      <script>
+function updateSelectColor(select) {
+  const selectedColor = select.value;
+  select.style.color = selectedColor;
+}
+
+// Optional: update on page load too
+window.addEventListener('DOMContentLoaded', () => {
+  const select = document.getElementById('colorSelect');
+  updateSelectColor(select);
+});
+</script>
+      <input type="text" placeholder="Message" name="message" id="messageInput" autocomplete="off" />
+
+      <button 
+        type="button" 
+        name="send" 
+        id="sendMessageBtn" 
+        style="padding: 12px 24px; font-size: 16px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Send
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .emoji-scroll-container {
+    position: absolute;
+    bottom: 110%;
+    left: 0;
+    z-index: 100;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 80px;
+    background-color: #fff;
+    box-sizing: border-box;
+  }
+
+  .emoji-btn {
+    font-size: 20px;
+    padding: 6px 10px;
+    cursor: pointer;
+    background: transparent;
+    border-radius: 6px;
+    text-align: center;
+    width: 100%;
+  }
+
+  #emojiBtn, #micBtn, #uploadAvatarBtn, #recordBtn {
+    font-size: 20px;
+    padding: 6px 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    color:   color:#107c77;
+;
+  }
+
+  #emojiBtn:hover, #micBtn:hover, #uploadAvatarBtn:hover, #recordBtn:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.05);
+  }
+
+  #user-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  #user-list img {
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+  }
+
+  .system-message {
+  color: red;
+  font-style: italic;
+  font-family: 'Michroma', sans-serif;
+  text-align: center;
+  margin: 8px 0;
+}
+
+</style>
+
+<script type="text/javascript">
+  const socketio = io();
+  const messages = document.getElementById("messages");
+  const userList = document.getElementById("user-list");
+  const messageInput = document.getElementById("messageInput");
+  const fontSelector = document.getElementById("fontSelector");
+  const fontColorSelector = document.getElementById("fontColorSelector");
+
+  const avatarBtn = document.getElementById('avatarBtn');
+  const uploadAvatarBtn = document.getElementById('uploadAvatarBtn');
+  const recordBtn = document.getElementById('recordBtn');
+  const micBtn = document.getElementById("micBtn");
+
+  const username = "{{ name }}";
+  let userFont = fontSelector.value;
+  let userFontColor = fontColorSelector.value;
+  let recorder;
+  let audioChunks = [];
+  let isRecording = false;
+  let recognition;
+
+  const userFonts = {};
+  const userFontColors = {};
+
+  socketio.emit("join", username);
+  socketio.emit("fontChange", { user: username, font: userFont });
+  socketio.emit("fontColorChange", { user: username, color: userFontColor });
+
+  fontSelector.addEventListener("change", (e) => {
+    userFont = e.target.value;
+    socketio.emit("fontChange", { user: username, font: userFont });
+  });
+
+  fontColorSelector.addEventListener("change", (e) => {
+    userFontColor = e.target.value;
+    socketio.emit("fontColorChange", { user: username, color: userFontColor });
+  });
+
+  const createMessage = (name, msg, type = "user") => {
+  let content = "";
+
+  if (type === "system" || name === "System") {
+    content = `
+      <div class="text system-message">
+        <span>${msg}</span>
+        <span class="muted">${new Date().toLocaleString()}</span>
+      </div>`;
+  } else {
+    const font = userFonts[name] || "Arial";
+    const color = userFontColors[name] || "#000000";
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    msg = msg.replace(urlRegex, '<a href="$&" target="_blank" class="chat-link" onclick="openPopup(event, this.href)">$&</a>');
+
+    content = `
+      <div class="text" style="font-family: ${font}; color: ${color};">
+        <span><strong>${name}</strong>: ${msg}</span>
+        <span class="muted">${new Date().toLocaleString()}</span>
+      </div>`;
+  }
+
+  messages.innerHTML += content;
+  messages.scrollTop = messages.scrollHeight;
+};
+
+socketio.on("message", (data) => {
+  createMessage(data.name, data.message, data.type);
+});
+
+
+ /* const createMessage = (name, msg) => {
+    const font = userFonts[name] || "Arial";
+    const color = userFontColors[name] || "#000000";
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    msg = msg.replace(urlRegex, '<a href="$&" target="_blank" class="chat-link" onclick="openPopup(event, this.href)">$&</a>');
+
+    const content = `
+      <div class="text" style="font-family: ${font}; color: ${color};">
+        <span><strong>${name}</strong>:${msg}</span>
+        <span class="muted">${new Date().toLocaleString()}</span>
+      </div>`;
+    messages.innerHTML += content;
+    messages.scrollTop = messages.scrollHeight;
+  };
+
+  socketio.on("message", (data) => {
+    createMessage(data.name, data.message);
+  });*/
+
+  socketio.on("fontChange", (data) => {
+    userFonts[data.user] = data.font;
+  });
+
+  socketio.on("fontColorChange", (data) => {
+    userFontColors[data.user] = data.color;
+  });
+
+  const updateUserList = (users, avatars) => {
+    userList.innerHTML = "";
+    users.forEach((user) => {
+      const li = document.createElement("li");
+      li.textContent = user;
+      if (avatars[user]) {
+        const avatarImg = document.createElement('img');
+        avatarImg.src = avatars[user];
+        avatarImg.alt = `${user}'s avatar`;
+        li.insertBefore(avatarImg, li.firstChild);
+      }
+      userList.appendChild(li);
+    });
+  };
+
+  socketio.on("updateUserList", (data) => {
+    updateUserList(data.members, data.avatars);
+  });
+
+  const sendMessage = () => {
+    const message = messageInput.value.trim();
+    if (message === "") return;
+    socketio.emit("message", { data: message });
+    messageInput.value = "";
+  };
+
+  document.getElementById("sendMessageBtn").addEventListener("click", sendMessage);
+  messageInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      sendMessage();
+    }
+  });
+
+  document.getElementById("emojiBtn").addEventListener("click", () => {
+    const container = document.getElementById("emojiContainer");
+    container.style.display = container.style.display === "none" ? "flex" : "none";
+  });
+
+  document.querySelectorAll(".emoji-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      messageInput.value += btn.textContent;
+      messageInput.focus();
+      document.getElementById("emojiContainer").style.display = "none";
+    });
+  });
+
+  // Speech-to-text
+  if ("webkitSpeechRecognition" in window) {
+    recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = "en-US";
+
+    micBtn.addEventListener("click", () => {
+      recognition.start();
+      micBtn.textContent = "Listening...";
+    });
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      messageInput.value += transcript + " ";
+      messageInput.focus();
+      micBtn.textContent = "CHROME-SP-TO-TXT";
+    };
+
+    recognition.onerror = () => micBtn.textContent = "CHROME-SP-TO-TXT";
+    recognition.onend = () => micBtn.textContent = "CHROME-SP-TO-TXT";
+  } else {
+    micBtn.disabled = true;
+    micBtn.title = "Speech recognition not supported";
+  }
+
+  // Audio Recording
+  recordBtn.addEventListener("click", async () => {
+    if (isRecording) {
+      recorder.stop();
+      recordBtn.textContent = "RECORD AUDIO";
+      isRecording = false;
+    } else {
+      audioChunks = [];
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        recorder = new MediaRecorder(stream, { mimeType: "audio/webm;codecs=opus" });
+
+        recorder.ondataavailable = event => { if (event.data.size > 0) audioChunks.push(event.data); };
+
+        recorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: "audio/webm;codecs=opus" });
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64data = reader.result;
+            const audioHTML = `<audio controls><source src="${base64data}" type="audio/webm"></audio>`;
+            socketio.emit("message", { data: audioHTML });
+          };
+          reader.readAsDataURL(audioBlob);
+        };
+
+        recorder.start();
+        recordBtn.textContent = "STOP RECORDING";
+        isRecording = true;
+      } catch (err) {
+        console.error("Microphone access error:", err);
+        alert("Microphone access denied or unavailable.");
+      }
+    }
+  });
+
+  // Avatar Upload
+  uploadAvatarBtn.addEventListener('click', () => avatarBtn.click());
+  avatarBtn.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append('avatar', file);
+
+      fetch("/upload_avatar", {
+        method: "POST",
+        body: formData
+      }).then(response => response.json())
+        .then(data => {
+          if (data.avatar_url) {
+            socketio.emit("updateUserList", { user: username, avatarUrl: data.avatar_url });
+          }
+        });
+    }
+  });
+</script>
+{% endblock %}
+</body>

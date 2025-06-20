@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!--<button class="homemodebutton" id="mode-toggle">
+  <img id="mode-icon" src="https://5fc98fa113f6897cea53-06dfa63be377ed632ae798753ae0fb3f.ssl.cf2.rackcdn.com/product_images/files/000/181/481/legacy_product_detail_large/data?1681938205" width="20" alt="Toggle Mode">
+</button>-->
+<style>
+  html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.Protest-Strike h6 {
+  font-size: clamp(2rem, 10vw, 6rem);
+}
+
+@media (max-width: 600px) {
+  .Protest-Strike {
+    top: 100px;
+    flex-direction: column;
+  }
+
+  .Protest-Strike h1 {
+    font-size: 2.5rem;
+  }
+}
+
+</style>
+
+    <header class="Protest-Strike"><h1 style="color: #cc5500; position: relative; top: 25px;">AnonymousGr<img class="woof" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgauTmvBC7TaihcTSu_VCbh0E9TN1cx3xh8h9g3DCcOFCfCv0GSdFXYNPCmNjL5TRA0uDhs0jNfbvLxO5MqB6E1k8lPAnh-UO6gZsrWYCVSvEZMgxbGrhcOGUoo2ZjuoDymYEPUSRbIDmZNd-0Gq0lf2rhXIBuIv6v2KEubo-h-W4JkOf4qnNiw7Cr3/s1600/anarchy.png" height="45" width="45">ffitiChat</h1></header>
+
+<form method="post" class="buttons">
+  <div class="homecontainer">
+
+<h6 class="rules">
+    1. To join a room, enter your name and click a room in the room list<br>
+    2. To create a room, enter a name and room name, then click "Create a Room"
+  </h6>
+
+  <div>
+    <input
+      class="pick"
+      type="text"
+      placeholder="Pick a name!"
+      name="name"
+      id="nameInput"
+      value="{{ name }}"
+    />
+  </div>
+
+  <div class="join">
+    <input class="roomcode" type="text" placeholder="Room Name" name="code" value="{{ code }}" />
+  </div>
+
+  <!-- Only one button: Create -->
+  <button class="createbtn" type="submit" name="action" value="create">Create a Room</button>
+
+  {% if error %}
+    <ul>
+      <li>{{ error }}</li>
+    </ul>
+  {% endif %}
+</form>
+
+<!-- List of Current Rooms -->
+<h3 class="current">Current Chat Rooms</h3>
+{% if rooms %}
+  <ul>
+    {% for room, details in rooms.items() %}
+    <li class="roomlist">
+      <a href="#" onclick="joinRoom('{{ room }}')">
+        <span class="code">{{ room }}</span>
+      </a> - {{ details["members"]|length }} users
+    </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="noactive">No active chat rooms.</p>
+{% endif %}
+</div>
+<script>
+function joinRoom(code) {
+  const name = document.getElementById("nameInput").value;
+  if (!name.trim()) {
+    alert("Please enter your name before joining a room.");
+    return;
+  }
+
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = "/";
+
+  const nameInput = document.createElement("input");
+  nameInput.type = "hidden";
+  nameInput.name = "name";
+  nameInput.value = name;
+  form.appendChild(nameInput);
+
+  const codeInput = document.createElement("input");
+  codeInput.type = "hidden";
+  codeInput.name = "code";
+  codeInput.value = code;
+  form.appendChild(codeInput);
+
+  const actionInput = document.createElement("input");
+  actionInput.type = "hidden";
+  actionInput.name = "action";
+  actionInput.value = "join";
+  form.appendChild(actionInput);
+
+  document.body.appendChild(form);
+  form.submit();
+}
+</script>
+
+{% endblock %}
