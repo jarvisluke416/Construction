@@ -77,7 +77,23 @@
   <img id="mode-icon" src="https://c.pxhere.com/photos/f1/89/full_moon_moon_moon_craters_lunar_landscape-706492.jpg!d#google_vignette" height="40" alt="Toggle Mode">
 </button>
 
-    </div>
+<textarea id="code-input" placeholder="Write HTML/JS/CSS here..." style="width: 150px; height: 50px; font-family: monospace;" onkeyup="runInPopup()"></textarea>
+  <button onclick="runInPopup()" style="padding: 6px 12px; margin-left: 5px;">
+    <i class="fa-solid fa-play"></i> Run 
+  </button>
+</div>
+ </div>
+ 
+<script>
+
+  function runInPopup() {
+    const code = document.getElementById('code-input').value;
+    const popup = window.open('', '_blank', 'width=800,height=600');
+    popup.document.open();
+    popup.document.write(code);
+    popup.document.close();
+  }
+</script>
 
     <div class="inputs" style="display: flex; align-items: center; gap: 10px;">
       <select id="fontSelector" style="padding: 6px; font-size: 20px; border-radius: 4px;" onchange="updateFont(this)">
