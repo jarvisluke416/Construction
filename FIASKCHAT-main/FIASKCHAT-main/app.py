@@ -126,6 +126,16 @@ def handle_font_color_change(data):
         rooms[room]["font_colors"][user] = color
         socketio.emit("fontColorChange", {"user": user, "color": color}, room=room)
 
+@socketio.on("broadcast_code")
+def broadcast_code(data):
+    room = session.get("room")
+    sender = session.get("name")
+    code = data.get("code", "")
+
+    if room in rooms and sender and code:
+        socketio.emit("broadcast_code", {"code": code, "sender": sender}, room=room)
+        print(f"{sender} broadcasted code to room {room}")
+
 @socketio.on("connect")
 def connect(auth):
     room = session.get("room")
