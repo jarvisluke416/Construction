@@ -18,7 +18,6 @@ body {
   min-height: 100vh;
 }
 
-
 .homecontainer {
   position: relative;
   top: 75px;
@@ -63,7 +62,6 @@ body {
   width: 80vw;
   align-items: stretch;
 }
-
 
 .messages {
   overflow-y: auto;
@@ -160,6 +158,10 @@ input, .pick, .roomcode {
   color: darkgray;
 }
 
+.roomlist a {
+  text-decoration: none;
+}
+
 .rules, .current, .please, .roomlist, .noactive {
   text-align: center;
   margin: 10px 0;
@@ -220,27 +222,24 @@ label {
   color:#107c77;
 }
 
-/* Video Chat Section */
-#video-chat-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
-  width: 100%;
-}
-
 .video-container {
-  width: 45%;
-  min-width: 300px;
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    background: #000;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
-#localVideo,
-#remoteVideo {
-  width: 100%;
-  height: auto;
-  border: 2px solid #ccc;
-  border-radius: 8px;
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
 }
 
 /* Emoji Size */
@@ -351,7 +350,8 @@ body.dark-mode .createbtn,
 body.dark-mode .joinbtn,
 body.dark-mode #emojiBtn,
 body.dark-mode #micBtn,
-body.dark-mode #send-btn {
+body.dark-mode #send-btn, 
+body.dark-mode .code-button {
   background-color: #333;
   color: #f0f0f0;
   border: 1px solid #555;
@@ -361,6 +361,7 @@ body.dark-mode .createbtn:hover,
 body.dark-mode .joinbtn:hover,
 body.dark-mode #emojiBtn:hover,
 body.dark-mode #micBtn:hover,
-body.dark-mode #send-btn:hover {
+body.dark-mode #send-btn:hover, 
+body.dark-mode .code-button:hover {
   background-color: #444;
 }
